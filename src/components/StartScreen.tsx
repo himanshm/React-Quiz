@@ -3,7 +3,7 @@ import { QuestionAction } from '../App.tsx';
 
 type StartScreenProps = {
   totalQuestions: number;
-  onStartQuiz: Dispatch<QuestionAction>;
+  onStartQuiz: Dispatch<QuestionAction<number>>;
 };
 
 function StartScreen({ totalQuestions, onStartQuiz }: StartScreenProps) {

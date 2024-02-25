@@ -18,20 +18,25 @@ interface QuestionState {
   questions: QuestionType[];
   status: string; // 'loading', 'error', 'ready', 'active', 'finished'
   currentQuestion: number;
+  answer: number | null;
 }
 
-export interface QuestionAction {
-  type: string;
-  payload?: QuestionType[];
+export interface QuestionAction<T> {
+  type: 'dataReceived' | 'dataFailed' | 'start' | 'newAnswer';
+  payload?: QuestionType[] | T;
 }
 
 const initialState = {
   questions: [],
   status: 'loading',
   currentQuestion: 0,
+  answer: null,
 };
 
-const reducer: Reducer<QuestionState, QuestionAction> = (state, action) => {
+const reducer: Reducer<QuestionState, QuestionAction<number>> = (
+  state,
+  action
+) => {
   if (action.type === 'dataReceived') {
     return { ...state, questions: action.payload, status: 'ready' };
   }
@@ -44,12 +49,16 @@ const reducer: Reducer<QuestionState, QuestionAction> = (state, action) => {
     return { ...state, status: 'active' };
   }
 
+  if (action.type === 'newAnswer') {
+    return { ...state, answer: action.payload };
+  }
+
   return { ...state, questions: state.questions };
 };
 
 function App() {
-  const [{ questions, status, currentQuestion }, dispatch] = useReducer<
-    Reducer<QuestionState, QuestionAction>
+  const [{ questions, status, currentQuestion, answer }, dispatch] = useReducer<
+    Reducer<QuestionState, QuestionAction<number>>
   >(reducer, initialState);
 
   const numQuestions = questions.length;
@@ -79,7 +88,11 @@ function App() {
           <StartScreen totalQuestions={numQuestions} onStartQuiz={dispatch} />
         )}
         {status === 'active' && (
-          <Question questionObj={questions[currentQuestion]} />
+          <Question
+            questionObj={questions[currentQuestion]}
+            onAnswer={dispatch}
+            selectedAnswer={answer}
+          />
         )}
       </Main>
     </div>
