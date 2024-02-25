@@ -1,32 +1,76 @@
-import { ChangeEvent, useState } from 'react';
+import { useReducer, type Reducer, type ChangeEvent } from 'react';
+
+interface CounterState {
+  count: number;
+  step: number;
+}
+
+interface CounterAction {
+  type: string;
+  payload?: number;
+}
+
+const reducer: Reducer<CounterState, CounterAction> = (state, action) => {
+  console.log(state, action);
+  switch (action.type) {
+    case 'dec':
+      return { ...state, count: state.count - state.step };
+    case 'inc':
+      return { ...state, count: state.count + state.step };
+    case 'setCount':
+      if (action.payload !== undefined) {
+        return { ...state, count: action.payload };
+      }
+      break;
+    case 'setStep':
+      if (action.payload !== undefined) {
+        return { ...state, step: action.payload };
+      }
+      break;
+    case 'reset':
+      return { count: 0, step: 1 };
+    default:
+      return {
+        ...state,
+        count: state.count, // Maintain the current count if unrecognized action
+      };
+  }
+  return state;
+};
 
 function DateCounter() {
-  const [count, setCount] = useState<number>(0);
-  const [step, setStep] = useState<number>(1);
+  const [state, dispatch] = useReducer<Reducer<CounterState, CounterAction>>(
+    reducer,
+    { count: 0, step: 1 }
+  );
 
-  // This mutates the date object.
-  const date = new Date('june 21 2027');
-  date.setDate(date.getDate() + count);
+  const { count, step } = state;
 
-  const dec = function (): void {
-    setCount((prevCount) => prevCount - step);
+  const calculateDisplayDate = (): Date => {
+    const baseDate = new Date();
+    const modifiedDate = new Date(baseDate.getTime()); // Clone to avoid mutation
+    modifiedDate.setDate(baseDate.getDate() + count);
+    return modifiedDate;
   };
 
-  const inc = function (): void {
-    setCount((prevCount) => prevCount + step);
+  const dec = function () {
+    dispatch({ type: 'dec' });
   };
 
-  const defineCount = function (event: ChangeEvent<HTMLInputElement>) {
-    setCount(Number(event.target.value));
+  const inc = function () {
+    dispatch({ type: 'inc' });
   };
 
-  const defineStep = function (event: ChangeEvent<HTMLInputElement>) {
-    setStep(Number(event.target.value));
+  const defineCount = function (e: ChangeEvent<HTMLInputElement>) {
+    dispatch({ type: 'setCount', payload: Number(e.target.value) });
   };
 
-  const reset = function (): void {
-    setCount(0);
-    setStep(1);
+  const defineStep = function (e: ChangeEvent<HTMLInputElement>) {
+    dispatch({ type: 'setStep', payload: Number(e.target.value) });
+  };
+
+  const reset = function () {
+    dispatch({ type: 'reset' });
   };
 
   return (
@@ -48,7 +92,7 @@ function DateCounter() {
         <button onClick={inc}>+</button>
       </div>
 
-      <p>{date.toDateString()}</p>
+      <p>{calculateDisplayDate().toDateString()}</p>
 
       <div>
         <button onClick={reset}>Reset</button>
@@ -56,5 +100,4 @@ function DateCounter() {
     </div>
   );
 }
-
 export default DateCounter;
