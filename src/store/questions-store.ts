@@ -99,7 +99,7 @@ export const reducer: Reducer<AppState, AppAction<number>> = (
   if (action.type === 'tick') {
     return {
       ...state,
-      secondsRemaining: state.secondsRemaining - 1,
+      secondsRemaining: state.secondsRemaining! - 1,
       status: state.secondsRemaining === 0 ? 'finished' : state.status,
     };
   }
