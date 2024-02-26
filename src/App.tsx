@@ -1,67 +1,44 @@
 import { useEffect, useReducer, type Reducer } from 'react';
+
 import Header from './components/Header';
 import Main from './components/Main';
 import Loader from './components/Loader';
 import Error from './components/Error';
 import StartScreen from './components/StartScreen';
 import Question from './components/Question';
+import NextButton from './components/NextButton';
+import Progress from './components/Progress';
+import Footer from './components/Footer';
+import Timer from './components/Timer';
 
-export interface QuestionType {
-  question: string;
-  options: string[];
-  correctOption: number;
-  points: number;
-  id: string;
-}
-
-interface QuestionState {
-  questions: QuestionType[];
-  status: string; // 'loading', 'error', 'ready', 'active', 'finished'
-  currentQuestion: number;
-  answer: number | null;
-}
-
-export interface QuestionAction<T> {
-  type: 'dataReceived' | 'dataFailed' | 'start' | 'newAnswer';
-  payload?: QuestionType[] | T;
-}
-
-const initialState = {
-  questions: [],
-  status: 'loading',
-  currentQuestion: 0,
-  answer: null,
-};
-
-const reducer: Reducer<QuestionState, QuestionAction<number>> = (
-  state,
-  action
-) => {
-  if (action.type === 'dataReceived') {
-    return { ...state, questions: action.payload, status: 'ready' };
-  }
-
-  if (action.type === 'dataFailed') {
-    return { ...state, status: 'error' };
-  }
-
-  if (action.type === 'start') {
-    return { ...state, status: 'active' };
-  }
-
-  if (action.type === 'newAnswer') {
-    return { ...state, answer: action.payload };
-  }
-
-  return { ...state, questions: state.questions };
-};
+import {
+  AppState,
+  AppAction,
+  initialState,
+  reducer,
+  QuestionType,
+} from './store/questions-store';
+import FinishScreen from './components/FinishScreen';
 
 function App() {
-  const [{ questions, status, currentQuestion, answer }, dispatch] = useReducer<
-    Reducer<QuestionState, QuestionAction<number>>
-  >(reducer, initialState);
+  const [
+    {
+      questions,
+      status,
+      currentQuestion,
+      answer,
+      points,
+      highscore,
+      secondsRemaining,
+    },
+    dispatch,
+  ] = useReducer<Reducer<AppState, AppAction<number>>>(reducer, initialState);
 
-  const numQuestions = questions.length;
+  const numQuestions: number = questions.length;
+  const maxPossiblePoints: number = questions.reduce(
+    (prev, cur) => prev + cur.points,
+    0
+  );
 
   useEffect(() => {
     async function fetchData() {
@@ -88,10 +65,37 @@ function App() {
           <StartScreen totalQuestions={numQuestions} onStartQuiz={dispatch} />
         )}
         {status === 'active' && (
-          <Question
-            questionObj={questions[currentQuestion]}
-            onAnswer={dispatch}
-            selectedAnswer={answer}
+          <>
+            <Progress
+              currentQuestion={currentQuestion}
+              numQuestions={numQuestions}
+              points={points}
+              maxPossiblePoints={maxPossiblePoints}
+              selectedAnswer={answer}
+            />
+            <Question
+              questionObj={questions[currentQuestion]}
+              onAnswer={dispatch}
+              selectedAnswer={answer}
+            />
+
+            <Footer>
+              <Timer runTimer={dispatch} timeLeft={secondsRemaining} />
+              <NextButton
+                nextQuestion={dispatch}
+                selectedAnswer={answer}
+                currentQuestion={currentQuestion}
+                TotalQuestions={numQuestions}
+              />
+            </Footer>
+          </>
+        )}
+        {status === 'finished' && (
+          <FinishScreen
+            score={points}
+            maxScore={maxPossiblePoints}
+            highScore={highscore}
+            restartQuiz={dispatch}
           />
         )}
       </Main>

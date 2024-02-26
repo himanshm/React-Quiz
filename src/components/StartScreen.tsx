@@ -1,9 +1,9 @@
 import { type Dispatch } from 'react';
-import { QuestionAction } from '../App.tsx';
+import { AppAction } from '../store/questions-store.ts';
 
 type StartScreenProps = {
   totalQuestions: number;
-  onStartQuiz: Dispatch<QuestionAction<number>>;
+  onStartQuiz: Dispatch<AppAction<number>>;
 };
 
 function StartScreen({ totalQuestions, onStartQuiz }: StartScreenProps) {

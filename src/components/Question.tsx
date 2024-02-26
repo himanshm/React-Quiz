@@ -1,16 +1,32 @@
-import { QuestionType } from '../App';
+import { QuestionType, AppAction } from '../store/questions-store.ts';
 import { type Dispatch } from 'react';
-import { QuestionAction } from '../App.tsx';
 
 type QuestionProps = {
   questionObj: QuestionType;
-  onAnswer: Dispatch<QuestionAction<number>>;
+  onAnswer: Dispatch<AppAction<number>>;
   selectedAnswer: number | null;
 };
 
 function Question({ questionObj, onAnswer, selectedAnswer }: QuestionProps) {
-  console.log(questionObj);
   const hasAnswered = selectedAnswer != null;
+
+  const getClassNames = (index: number) => {
+    let className = 'btn btn-option'; // Base class
+
+    if (index === selectedAnswer) {
+      className += ' answer';
+    }
+
+    if (hasAnswered) {
+      if (index === questionObj.correctOption) {
+        className += ' correct';
+      } else {
+        className += ' wrong';
+      }
+    }
+
+    return className;
+  };
 
   return (
     <div>
@@ -21,15 +37,7 @@ function Question({ questionObj, onAnswer, selectedAnswer }: QuestionProps) {
           <button
             key={option}
             disabled={hasAnswered}
-            className={`btn btn-option ${
-              index === selectedAnswer ? 'answer' : ''
-            } ${
-              hasAnswered
-                ? index === questionObj.correctOption
-                  ? 'correct'
-                  : 'wrong'
-                : ''
-            }`}
+            className={getClassNames(index)}
             onClick={() => onAnswer({ type: 'newAnswer', payload: index })}
           >
             {option}
