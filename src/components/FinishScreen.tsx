@@ -5,7 +5,7 @@ type FinishScreenProps = {
   score: number;
   maxScore: number;
   highScore: number;
-  restartQuiz: Dispatch<AppAction<number>>;
+  restartQuiz: Dispatch<AppAction>;
 };
 
 function FinishScreen({

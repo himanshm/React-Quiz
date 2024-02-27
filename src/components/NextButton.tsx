@@ -2,7 +2,7 @@ import { type Dispatch } from 'react';
 import { AppAction } from '../store/questions-store.ts';
 
 type NextQuestionProps = {
-  nextQuestion: Dispatch<AppAction<number>>;
+  nextQuestion: Dispatch<AppAction>;
   selectedAnswer: number | null;
   currentQuestion: number;
   TotalQuestions: number;

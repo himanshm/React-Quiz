@@ -18,19 +18,6 @@ export interface AppState {
   secondsRemaining: number | null;
 }
 
-export interface AppAction<T> {
-  type:
-    | 'dataReceived'
-    | 'dataFailed'
-    | 'start'
-    | 'newAnswer'
-    | 'nextQuestion'
-    | 'finish'
-    | 'restart'
-    | 'tick';
-  payload?: QuestionType[] | T;
-}
-
 export const initialState = {
   questions: [],
   status: 'loading',
@@ -40,13 +27,53 @@ export const initialState = {
   highscore: 0,
   secondsRemaining: null,
 };
+type dataReceivedAction = {
+  type: 'dataReceived';
+  payload: QuestionType[];
+};
+
+type dataFailedAction = {
+  type: 'dataFailed';
+};
+
+type startAction = {
+  type: 'start';
+};
+
+type newAnswerAction = {
+  type: 'newAnswer';
+  payload: number | null;
+};
+
+type nextQuestionAction = {
+  type: 'nextQuestion';
+};
+
+type finishAction = {
+  type: 'finish';
+};
+
+type restartAction = {
+  type: 'restart';
+};
+
+type tickAction = {
+  type: 'tick';
+};
+
+export type AppAction =
+  | dataReceivedAction
+  | dataFailedAction
+  | startAction
+  | newAnswerAction
+  | nextQuestionAction
+  | finishAction
+  | restartAction
+  | tickAction;
 
 const SECS_PER_QUESTION = 10;
 
-export const reducer: Reducer<AppState, AppAction<number>> = (
-  state,
-  action
-) => {
+export const reducer: Reducer<AppState, AppAction> = (state, action) => {
   if (action.type === 'dataReceived') {
     return { ...state, questions: action.payload, status: 'ready' };
   }

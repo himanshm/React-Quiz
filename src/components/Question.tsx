@@ -3,7 +3,7 @@ import { type Dispatch } from 'react';
 
 type QuestionProps = {
   questionObj: QuestionType;
-  onAnswer: Dispatch<AppAction<number>>;
+  onAnswer: Dispatch<AppAction>;
   selectedAnswer: number | null;
 };
 

@@ -32,7 +32,7 @@ function App() {
       secondsRemaining,
     },
     dispatch,
-  ] = useReducer<Reducer<AppState, AppAction<number>>>(reducer, initialState);
+  ] = useReducer<Reducer<AppState, AppAction>>(reducer, initialState);
 
   const numQuestions: number = questions.length;
   const maxPossiblePoints: number = questions.reduce(

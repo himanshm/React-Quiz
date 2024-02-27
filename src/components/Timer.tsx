@@ -3,7 +3,7 @@ import { type Dispatch } from 'react';
 import { AppAction } from '../store/questions-store';
 
 type TimerProps = {
-  runTimer: Dispatch<AppAction<number>>;
+  runTimer: Dispatch<AppAction>;
   timeLeft: number | null;
 };
 
