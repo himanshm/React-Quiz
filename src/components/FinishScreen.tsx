@@ -1,18 +1,15 @@
-import { Dispatch } from 'react';
-import { AppAction } from '../store/questions-store';
-
 type FinishScreenProps = {
   score: number;
   maxScore: number;
   highScore: number;
-  restartQuiz: Dispatch<AppAction>;
+  onRestartQuiz: () => void;
 };
 
 function FinishScreen({
   score,
   maxScore,
   highScore,
-  restartQuiz,
+  onRestartQuiz,
 }: FinishScreenProps) {
   const percentage = (score / maxScore) * 100;
 
@@ -31,10 +28,7 @@ function FinishScreen({
         {maxScore} ({Math.ceil(percentage)}%)
       </p>
       <p className='highscore'>(Highscore: {highScore} points)</p>
-      <button
-        className='btn btn-ui'
-        onClick={() => restartQuiz({ type: 'restart' })}
-      >
+      <button className='btn btn-ui' onClick={onRestartQuiz}>
         Restart Quiz
       </button>
     </>

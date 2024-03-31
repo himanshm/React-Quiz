@@ -1,29 +1,28 @@
 import { useEffect } from 'react';
-import { type Dispatch } from 'react';
-import { AppAction } from '../store/questions-store';
 
 type TimerProps = {
-  runTimer: Dispatch<AppAction>;
+  runTimer: () => void;
   timeLeft: number | null;
 };
 
 function Timer({ runTimer, timeLeft }: TimerProps) {
-  const mins = Math.floor(timeLeft! / 60);
-  const secs = timeLeft! % 60;
+  const safeTimeLeft = timeLeft ?? 0;
+  const mins = Math.floor(safeTimeLeft / 60);
+  const secs = safeTimeLeft % 60;
+
   useEffect(() => {
     const timer = setInterval(() => {
-      runTimer({ type: 'tick' });
+      runTimer();
     }, 1000);
 
     return () => {
       clearInterval(timer);
     };
   }, [runTimer]);
+
   return (
     <div className='timer'>
-      {mins < 10 && '0'}
-      {mins}: {secs < 10 && '0'}
-      {secs}
+      {`${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`}
     </div>
   );
 }

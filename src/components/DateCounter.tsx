@@ -5,43 +5,33 @@ interface CounterState {
   step: number;
 }
 
-interface CounterAction {
-  type: string;
-  payload?: number;
-}
+type CounterAction =
+  | { type: 'dec' | 'inc' | 'reset' }
+  | { type: 'setCount' | 'setStep'; payload: number };
 
 const reducer: Reducer<CounterState, CounterAction> = (state, action) => {
-  console.log(state, action);
   switch (action.type) {
     case 'dec':
       return { ...state, count: state.count - state.step };
     case 'inc':
       return { ...state, count: state.count + state.step };
     case 'setCount':
-      if (action.payload !== undefined) {
-        return { ...state, count: action.payload };
-      }
-      break;
+      return { ...state, count: action.payload };
     case 'setStep':
-      if (action.payload !== undefined) {
-        return { ...state, step: action.payload };
-      }
-      break;
+      return { ...state, step: action.payload };
     case 'reset':
       return { count: 0, step: 1 };
     default:
-      return {
-        ...state,
-        count: state.count, // Maintain the current count if unrecognized action
-      };
+      return state;
   }
-  return state;
 };
+
+const initialState = { count: 0, step: 1 };
 
 function DateCounter() {
   const [state, dispatch] = useReducer<Reducer<CounterState, CounterAction>>(
     reducer,
-    { count: 0, step: 1 }
+    initialState
   );
 
   const { count, step } = state;

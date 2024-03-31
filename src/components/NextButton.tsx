@@ -1,15 +1,14 @@
-import { type Dispatch } from 'react';
-import { AppAction } from '../store/questions-store.ts';
-
 type NextQuestionProps = {
-  nextQuestion: Dispatch<AppAction>;
+  onNextQuestion: () => void;
+  onFinish: () => void;
   selectedAnswer: number | null;
   currentQuestion: number;
   TotalQuestions: number;
 };
 
 function NextButton({
-  nextQuestion,
+  onNextQuestion,
+  onFinish,
   selectedAnswer,
   currentQuestion,
   TotalQuestions,
@@ -18,20 +17,14 @@ function NextButton({
 
   if (currentQuestion < TotalQuestions - 1)
     return (
-      <button
-        className='btn btn-ui'
-        onClick={() => nextQuestion({ type: 'nextQuestion' })}
-      >
+      <button className='btn btn-ui' onClick={onNextQuestion}>
         Next
       </button>
     );
 
   if (currentQuestion === TotalQuestions - 1)
     return (
-      <button
-        className='btn btn-ui'
-        onClick={() => nextQuestion({ type: 'finish' })}
-      >
+      <button className='btn btn-ui' onClick={onFinish}>
         Finish
       </button>
     );
